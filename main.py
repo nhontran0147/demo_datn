@@ -15,20 +15,19 @@ from PyQt5.QtWidgets import QMessageBox
 
 dsMonhoc = [
     "Cấu trúc dữ liệu và giải thuật",
-    "Tin học cơ sở 2",
     "Lập trình hướng đối tượng",
+    "Lập trình web"
     # "Nhập môn trí tuệ nhân tạo",
     # "Cơ sở dữ liệu phân tán",
 ]
 dsMonQuaKhu = [
-    ["Ngôn ngữ lập trình C++", "Tin học cơ sở 2", "Đại số", "Giải tích 2"],
-    ["Tin học cơ sở 1", "Đại số"],
+
+    ["Ngôn ngữ lập trình C++", "Tin học cơ sở 2", "Toán rời rạc 2"],
+    ["Ngôn ngữ lập trình C++", "Cấu trúc dữ liệu và giải thuật"],
     [
-        "Cấu trúc dữ liệu và giải thuật",
-        "Toán rời rạc 2",
-        "Toán rời rạc 1",
-        "Tin học cơ sở 2",
-        "Tin học cơ sở 1",
+        "Ngôn ngữ lập trình C++",
+        "Lập trình hướng đối tượng",
+        "Cơ sở dữ liệu"
     ],
     # [],
     # [],
@@ -45,16 +44,16 @@ class Model:
 
 
 svm_1306 = pickle.load(open("./models/models_INT1306_svm.sav", "rb"), encoding='latin1')
-svm_1155 = pickle.load(open("./models/models_INT1155_svm.sav", "rb"), encoding='latin1')
+svm_1434 = pickle.load(open("./models/models_INT1434_3_svm.sav", "rb"), encoding='latin1')
 svm_1332 = pickle.load(open("./models/models_INT1332_svm.sav", "rb"), encoding='latin1')
 lr_1306 = pickle.load(open("./models/models_INT1306_lr.sav", "rb"), encoding='latin1')
-lr_1155 = pickle.load(open("./models/models_INT1155_lr.sav", "rb"), encoding='latin1')
+lr_1434 = pickle.load(open("./models/models_INT1434_3_lr.sav", "rb"), encoding='latin1')
 lr_1332 = pickle.load(open("./models/models_INT1332_lr.sav", "rb"), encoding='latin1')
 svm_models = [
-    svm_1306, svm_1155, svm_1332
+    svm_1306, svm_1332, svm_1434
 ]
 lr_models = [
-    lr_1306, lr_1155, lr_1332
+    lr_1306, lr_1332, lr_1434
 ]
 
 
@@ -190,8 +189,8 @@ class Ui_MainWindow(object):
         predictInput = []
         predictInput.append(arr)
 
-        print(self.checkBox.isChecked()) #logistic
-        print(self.checkBox_2.isChecked()) #svm
+        print(self.checkBox.isChecked())  # logistic
+        print(self.checkBox_2.isChecked())  # svm
         print(predictInput)
 
         # result_svm = 0
@@ -206,7 +205,7 @@ class Ui_MainWindow(object):
             print("SVM :", kq)
 
             self.label_8.setText(_translate("MainWindow",
-                                        f"<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">- Mô hình Support Vector Machinces dự đoán sinh viên {kq} môn {text}</span></p></body></html>"))
+                                            f"<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">- Mô hình Support Vector Machinces dự đoán sinh viên {kq} môn {text}</span></p></body></html>"))
         else:
             self.label_8.clear()
 

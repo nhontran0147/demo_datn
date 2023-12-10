@@ -4,3 +4,6 @@ models/drive-download-20231128T204618Z-001
 models/drive-download-20231128T204618Z-001.zip
 models/.ipynb_checkpoints
 .idea
+docs
+test.py
+data
