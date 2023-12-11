@@ -149,7 +149,7 @@ p, li { white-space: pre-wrap; }
        <x>0</x>
        <y>0</y>
        <width>85</width>
-       <height>93</height>
+       <height>85</height>
       </rect>
      </property>
      <attribute name="label">
@@ -161,8 +161,8 @@ p, li { white-space: pre-wrap; }
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>85</width>
-       <height>93</height>
+       <width>100</width>
+       <height>30</height>
       </rect>
      </property>
      <attribute name="label">
@@ -188,7 +188,7 @@ p, li { white-space: pre-wrap; }
        <x>0</x>
        <y>0</y>
        <width>628</width>
-       <height>458</height>
+       <height>504</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -481,7 +481,7 @@ background-color: rgb(242, 248, 255);</string>
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>170</y>
+       <y>250</y>
        <width>511</width>
        <height>311</height>
       </rect>
@@ -558,11 +558,21 @@ background-color: rgb(242, 248, 255);</string>
       </layout>
      </widget>
     </widget>
+    <widget class="QWidget" name="widget_4" native="true">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>70</y>
+       <width>511</width>
+       <height>80</height>
+      </rect>
+     </property>
+    </widget>
     <widget class="QPushButton" name="pushButton">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>500</y>
+       <y>160</y>
        <width>511</width>
        <height>61</height>
       </rect>
@@ -582,16 +592,6 @@ background-color: rgb(94, 189, 140);</string>
      </property>
      <property name="text">
       <string>DỰ ĐOÁN*</string>
-     </property>
-    </widget>
-    <widget class="QWidget" name="widget_4" native="true">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>70</y>
-       <width>511</width>
-       <height>80</height>
-      </rect>
      </property>
     </widget>
     <zorder>widget_4</zorder>
@@ -718,7 +718,7 @@ background-color: rgb(242, 248, 255);</string>
      <x>0</x>
      <y>0</y>
      <width>1207</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>

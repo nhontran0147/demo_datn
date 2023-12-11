@@ -56,10 +56,23 @@ lr_models = [
     lr_1306, lr_1332, lr_1434
 ]
 
+lr =  "Mô hình Linear Regression:       "
+svm = "Mô hình Support Vector Machines: "
 
-class FakeGroupBox(object):
+class FakeGroupBox:
+    def __init__(self, label_7, label_8):
+        self.label_7 = label_7
+        self.label_8 = label_8
 
     def onTextChanged(self, text):
+        _translate = QtCore.QCoreApplication.translate
+
+        self.label_7.clear()
+        self.label_8.clear()
+        self.label_7.setText(_translate("MainWindow",
+                                        f"<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">- {lr}</span></p></body></html>"))
+        self.label_8.setText(_translate("MainWindow",
+                                        f"<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">- {svm}</span></p></body></html>"))
         lenEdit = len(self.edit) - 1
         if self.edit[lenEdit].text() == '':
             return
@@ -165,6 +178,8 @@ class Ui_MainWindow(object):
 
     def __init__(self):
         self.verticalLayout_2 = None
+        self.label_7 = None
+        self.label_8 = None
 
     def onClickedPredict(self):
         _translate = QtCore.QCoreApplication.translate
@@ -189,7 +204,7 @@ class Ui_MainWindow(object):
         predictInput = []
         predictInput.append(arr)
 
-        print(self.checkBox.isChecked())  # logistic
+        print(self.checkBox.isChecked())  # Linear
         print(self.checkBox_2.isChecked())  # svm
         print(predictInput)
 
@@ -199,34 +214,78 @@ class Ui_MainWindow(object):
         print("current text", self.comboBox.currentText())
         index = self.comboBox.currentIndex()
         text = self.comboBox.currentText()
-        if self.checkBox_2.isChecked() == True:
+
+        if self.checkBox_2.isChecked() == True and self.checkBox.isChecked() == True:
             result_svm = svm_models[index].model.predict(predictInput)
-            kq = 'ĐẬU' if result_svm[0] == 1 else 'RỚT'
-            print("SVM :", kq)
-
-            self.label_8.setText(_translate("MainWindow",
-                                            f"<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">- Mô hình Support Vector Machinces dự đoán sinh viên {kq} môn {text}</span></p></body></html>"))
-        else:
-            self.label_8.clear()
-
-        if self.checkBox.isChecked() == True:
+            kq_svm = 'ĐẬU' if result_svm[0] == 1 else 'RỚT'
+            print("SVM :", kq_svm)
             result_lr = lr_models[index].model.predict(predictInput)
-            kq = 'ĐẬU' if result_lr[0] == 1 else 'RỚT'
-            print("Logistic :", kq)
+            kq_lr = 'ĐẬU' if result_lr[0] == 1 else 'RỚT'
+            print("Linear :", kq_lr)
 
-            self.label_7.setText(_translate("MainWindow",
-                                            f"<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">- Mô hình Logistic Regression dự đoán sinh viên {kq} môn {text}</span></p></body></html>"))
-        else:
             self.label_7.clear()
+            self.label_8.clear()
+            self.label_7.setText(_translate("MainWindow",
+                                            f"<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">- {lr} {kq_lr}</span></p></body></html>"))
+            self.label_8.setText(_translate("MainWindow",
+                                            f"<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">- {svm} {kq_svm}</span></p></body></html>"))
+        else:
+            if self.checkBox_2.isChecked() == True:
+                result_svm = svm_models[index].model.predict(predictInput)
+                kq = 'ĐẬU' if result_svm[0] == 1 else 'RỚT'
+                print("SVM :", kq)
+
+                self.label_7.clear()
+                self.label_8.clear()
+                self.label_7.setText(_translate("MainWindow",
+                                                f"<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">- {lr}</span></p></body></html>"))
+                self.label_8.setText(_translate("MainWindow",
+                                                f"<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">- {svm} {kq}</span></p></body></html>"))
+            elif self.checkBox.isChecked() == True:
+                result_lr = lr_models[index].model.predict(predictInput)
+                kq = 'ĐẬU' if result_lr[0] == 1 else 'RỚT'
+                print("Linear :", kq)
+
+                self.label_7.clear()
+                self.label_8.clear()
+                self.label_7.setText(_translate("MainWindow",
+                                                f"<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">- {lr} {kq}</span></p></body></html>"))
+                self.label_8.setText(_translate("MainWindow",
+                                                f"<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">- {svm}</span></p></body></html>"))
+            else:
+                self.label_7.clear()
+                self.label_8.clear()
+                self.label_7.setText(_translate("MainWindow",
+                                                f"<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">- {lr}</span></p></body></html>"))
+                self.label_8.setText(_translate("MainWindow",
+                                                f"<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">- {svm}</span></p></body></html>"))
+
+                msg = QtWidgets.QMessageBox()
+                msg.setIcon(QtWidgets.QMessageBox.Information)
+                msg.setText("Bạn chưa chọn mô hình dự đoán")
+                msg.setWindowTitle("Cảnh báo!")
+                msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
+                msg.exec_()
+                return
+
+
 
     def onActivatedComboBox(self, index):
         # Lấy giá trị của item được chọn
+        _translate = QtCore.QCoreApplication.translate
+
         # Hoặc
         value = self.comboBox.currentText()
         self.indexComboBox = index
         print(self.indexComboBox)
         print(value)
         self.updateScoll(index)
+        self.label_7.clear()
+        self.label_8.clear()
+        self.label_7.setText(_translate("MainWindow",
+                                        f"<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">- {lr}</span></p></body></html>"))
+        self.label_8.setText(_translate("MainWindow",
+                                        f"<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">- {svm}</span></p></body></html>"))
         # Làm gì đó với value
 
     def updateScoll(self, index):
@@ -241,7 +300,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.listgroup = []
         for i in range(0, len(dsMonQuaKhu[index])):
-            fakeGroupBox = FakeGroupBox()
+            fakeGroupBox = FakeGroupBox(self.label_7, self.label_8)
             fakeGroupBox.setup(self.scrollAreaWidgetContents)
             fakeGroupBox.groupBox.setStyleSheet("font-size: 17px;")  # Thay đổi kích thước font là 16px
             fakeGroupBox.groupBox.setTitle(_translate("MainWindow", listQuaKhu[i]))
@@ -298,8 +357,7 @@ class Ui_MainWindow(object):
         self.comboBox.setStyleSheet("font: 14pt \"Times New Roman\";")
         self.comboBox.setObjectName("comboBox")
         self.comboBox.activated.connect(self.onActivatedComboBox)
-        self.setCombobox()
-        self.indexComboBox = 0
+
 
         self.toolBox = QtWidgets.QToolBox(self.centralwidget)
         self.toolBox.setGeometry(QtCore.QRect(-270, 540, 85, 147))
@@ -321,8 +379,6 @@ class Ui_MainWindow(object):
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.listgroup = []
-        self.updateScoll(0)
 
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(10, 170, 331, 41))
@@ -378,6 +434,13 @@ class Ui_MainWindow(object):
         self.label_8.setWordWrap(True)
         self.label_8.setObjectName("label_8")
         self.verticalLayout_6.addWidget(self.label_8)
+
+
+        self.listgroup = []
+        self.updateScoll(0)
+        self.setCombobox()
+        self.indexComboBox = 0
+
         self.pushButton = QtWidgets.QPushButton(self.widget)
         self.pushButton.setGeometry(QtCore.QRect(10, 500, 511, 61))
         self.pushButton.clicked.connect(self.onClickedPredict)
@@ -464,7 +527,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindoww"))
         self.label_3.setText(_translate("MainWindow",
                                         "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
                                         "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
@@ -495,13 +558,13 @@ class Ui_MainWindow(object):
         self.label.setText(_translate("MainWindow",
                                       "<html><head/><body><p><span style=\" font-size:14pt;\">Nhập điểm tổng kết cảc môn đã học:</span></p></body></html>"))
         self.checkBox_2.setText(_translate("MainWindow", "Support Vector Machines"))
-        self.checkBox.setText(_translate("MainWindow", "Logistic Regression"))
+        self.checkBox.setText(_translate("MainWindow", "Linear Regression"))
         self.label_5.setText(_translate("MainWindow",
                                         "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt; font-weight:600;\">KẾT QUẢ DỰ ĐOÁN</span></p></body></html>"))
-        # self.label_7.setText(_translate("MainWindow",
-        #                                 "<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">- Mô hình Logistic Regression dự đoán sinh viên ĐẠT môn Cấu trúc dữ liệu và Giải thuật</span></p></body></html>"))
-        # self.label_8.setText(_translate("MainWindow",
-        #                                 "<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">- Mô hình Support Vector Machinces dự đoán sinh viên ĐẠT môn Cấu trúc dữ liệu và Giải thuật</span></p></body></html>"))
+        self.label_7.setText(_translate("MainWindow",
+                                        f"<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">- {lr}</span></p></body></html>"))
+        self.label_8.setText(_translate("MainWindow",
+                                        f"<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">- {svm}</span></p></body></html>"))
         self.pushButton.setText(_translate("MainWindow", "DỰ ĐOÁN*"))
         self.label_2.setText(_translate("MainWindow",
                                         "<html><head/><body><p><span style=\" font-size:14pt;\">Lựa chọn mô hình dự đoán của các thuật toán:</span></p></body></html>"))
