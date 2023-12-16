@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1207</width>
-    <height>905</height>
+    <height>846</height>
    </rect>
   </property>
   <property name="font">
@@ -83,7 +83,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>160</y>
+      <y>190</y>
       <width>251</width>
       <height>41</height>
      </rect>
@@ -112,7 +112,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>270</x>
-      <y>160</y>
+      <y>190</y>
       <width>401</width>
       <height>41</height>
      </rect>
@@ -174,7 +174,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>370</y>
+      <y>290</y>
       <width>651</width>
       <height>441</height>
      </rect>
@@ -416,9 +416,9 @@ p, li { white-space: pre-wrap; }
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>320</y>
-      <width>611</width>
+      <x>10</x>
+      <y>240</y>
+      <width>331</width>
       <height>41</height>
      </rect>
     </property>
@@ -427,7 +427,7 @@ p, li { white-space: pre-wrap; }
 background-color: rgb(242, 248, 255);</string>
     </property>
     <property name="text">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt;&quot;&gt;Bảng điểm tổng kết cảc môn đã học của sinh viên có mã N19DCCN132:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt;&quot;&gt;Nhập điểm tổng kết cảc môn đã học:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
    <widget class="QWidget" name="widget" native="true">
@@ -436,7 +436,7 @@ background-color: rgb(242, 248, 255);</string>
       <x>680</x>
       <y>150</y>
       <width>531</width>
-      <height>671</height>
+      <height>591</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -447,7 +447,7 @@ background-color: rgb(242, 248, 255);</string>
      <property name="geometry">
       <rect>
        <x>50</x>
-       <y>100</y>
+       <y>110</y>
        <width>231</width>
        <height>30</height>
       </rect>
@@ -463,7 +463,7 @@ background-color: rgb(242, 248, 255);</string>
      <property name="geometry">
       <rect>
        <x>50</x>
-       <y>50</y>
+       <y>70</y>
        <width>201</width>
        <height>30</height>
       </rect>
@@ -483,7 +483,7 @@ background-color: rgb(242, 248, 255);</string>
        <x>10</x>
        <y>250</y>
        <width>511</width>
-       <height>411</height>
+       <height>311</height>
       </rect>
      </property>
      <property name="styleSheet">
@@ -517,7 +517,7 @@ background-color: rgb(242, 248, 255);</string>
         <x>10</x>
         <y>80</y>
         <width>491</width>
-        <height>311</height>
+        <height>181</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -606,7 +606,7 @@ background-color: rgb(94, 189, 140);</string>
       <x>-1</x>
       <y>150</y>
       <width>681</width>
-      <height>671</height>
+      <height>591</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -619,7 +619,7 @@ background-color: rgb(242, 248, 255);</string>
        <x>670</x>
        <y>0</y>
        <width>20</width>
-       <height>671</height>
+       <height>571</height>
       </rect>
      </property>
      <property name="sizePolicy">
@@ -638,79 +638,12 @@ background-color: rgb(242, 248, 255);</string>
       <enum>Qt::Vertical</enum>
      </property>
     </widget>
-    <widget class="QLabel" name="label_9">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>70</y>
-       <width>291</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt;&quot;&gt;Nhập mã số sinh viên:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="lineEdit">
-     <property name="geometry">
-      <rect>
-       <x>270</x>
-       <y>60</y>
-       <width>171</width>
-       <height>41</height>
-      </rect>
-     </property>
-     <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt;&quot;&gt;N19DCCN132&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(255, 255, 255);
-font: 14pt &quot;Times New Roman&quot;;</string>
-     </property>
-     <property name="text">
-      <string>N19DCCN132</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButton_10">
-     <property name="geometry">
-      <rect>
-       <x>460</x>
-       <y>60</y>
-       <width>171</width>
-       <height>41</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(94, 189, 140);
-font: 14pt &quot;Times New Roman&quot;;</string>
-     </property>
-     <property name="text">
-      <string>LOAD DỮ LIỆU</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_10">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>130</y>
-       <width>251</width>
-       <height>41</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt;&quot;&gt;Kết quả thực tế: &lt;/span&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;ĐẬU&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-    </widget>
    </widget>
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
       <x>700</x>
-      <y>160</y>
+      <y>170</y>
       <width>421</width>
       <height>41</height>
      </rect>
@@ -727,15 +660,12 @@ background-color: rgb(242, 248, 255);</string>
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>820</y>
+      <y>750</y>
       <width>1201</width>
       <height>71</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_7">
-     <property name="spacing">
-      <number>7</number>
-     </property>
      <item>
       <spacer name="horizontalSpacer_5">
        <property name="orientation">
@@ -786,9 +716,9 @@ background-color: rgb(242, 248, 255);</string>
     <widget class="QRadioButton" name="radioButton">
      <property name="geometry">
       <rect>
-       <x>380</x>
+       <x>390</x>
        <y>0</y>
-       <width>181</width>
+       <width>161</width>
        <height>61</height>
       </rect>
      </property>

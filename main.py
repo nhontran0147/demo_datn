@@ -11,7 +11,8 @@ import pickle
 
 from PyQt5 import QtCore, QtGui, QtWidgets, sip
 from PyQt5.QtGui import QDoubleValidator
-from PyQt5.QtWidgets import QMessageBox
+
+from PyQt5.QtWidgets import QMessageBox, QListWidgetItem, QListWidget
 
 dsMonhoc = [
     "Cấu trúc dữ liệu và giải thuật",
@@ -22,7 +23,7 @@ dsMonhoc = [
 ]
 dsMonQuaKhu = [
 
-    ["Ngôn ngữ lập trình C++", "Tin học cơ sở 2", "Toán rời rạc 2"],
+    ["Ngôn ngữ lập trình C++", "Tin học cơ sở 2", "Toán rời rạc 1"],
     ["Ngôn ngữ lập trình C++", "Cấu trúc dữ liệu và giải thuật"],
     [
         "Ngôn ngữ lập trình C++",
@@ -58,6 +59,9 @@ lr_models = [
 
 lr =  "Mô hình Linear Regression:       "
 svm = "Mô hình Support Vector Machines: "
+INDEX_DEFAULT = 0
+Sample_codes = ["ABC123", "XYZ4q516", "DEFq7819", "GHI123", "JKL41q56", "MNO1789", "PQR123", "STU456", "VWX789", "YZA123"]
+
 
 class FakeGroupBox:
     def __init__(self, label_7, label_8):
@@ -180,15 +184,22 @@ class Ui_MainWindow(object):
         self.verticalLayout_2 = None
         self.label_7 = None
         self.label_8 = None
+        self.is_load_success = False
 
     def onClickedPredict(self):
         _translate = QtCore.QCoreApplication.translate
 
+        global INDEX_DEFAULT
         print("Predict")
+        print(f"index_defaut = {INDEX_DEFAULT}")
         arr = []
+        arr_tb = []
         for i in range(len(self.listgroup)):
             max = 0.0
+            tb = 0.0
+            temp =0
             for j in self.listgroup[i].edit:
+                temp +=1
                 if len(j.text()) == 0:
                     msg = QtWidgets.QMessageBox()
                     msg.setIcon(QtWidgets.QMessageBox.Information)
@@ -200,9 +211,15 @@ class Ui_MainWindow(object):
                 value = float(j.text())
                 if value > max:
                     max = value
+                tb += value
             arr.append(max)
+            tb /= temp
+            arr_tb.append(tb)
         predictInput = []
-        predictInput.append(arr)
+        if INDEX_DEFAULT == 1:
+            predictInput.append(arr_tb)
+        else:
+            predictInput.append(arr)
 
         print(self.checkBox.isChecked())  # Linear
         print(self.checkBox_2.isChecked())  # svm
@@ -290,7 +307,8 @@ class Ui_MainWindow(object):
 
     def updateScoll(self, index):
         _translate = QtCore.QCoreApplication.translate
-
+        global INDEX_DEFAULT
+        INDEX_DEFAULT = index
         listQuaKhu = dsMonQuaKhu[index]
         print(listQuaKhu)
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
@@ -312,9 +330,55 @@ class Ui_MainWindow(object):
         for i in range(0, len(dsMonhoc)):
             self.comboBox.addItem("")
 
+    def radioButtonClicked(self):
+        if self.radioButton.isChecked():
+            print("KIỂM CHỨNG is checked.")
+        elif self.radioButton_2.isChecked():
+            print("DỰ ĐOÁN is unchecked.")
+
+    def onPushLoad(self):
+        self.is_load_success = not self.is_load_success
+        if self.is_load_success:
+            self.checkBox.setEnabled(True)
+            self.checkBox_2.setEnabled(True)
+            self.pushButton.setEnabled(True)
+        else:
+            self.checkBox.setEnabled(False)
+            self.checkBox_2.setEnabled(False)
+            self.pushButton.setEnabled(False)
+
+    def showResults(self, text):
+        # Hiển thị danh sách kết quả khi có sự kiện nhập liệu
+        self.listWidget.clear()
+
+        if text:
+            # Tìm kiếm và hiển thị top 5 kết quả gần khớp nhất
+            results = self.searchCodes(text)
+            print(results)
+            for result in results[:5]:
+                item = QtWidgets.QListWidgetItem(result)
+                self.listWidget.addItem(item)
+
+            # Hiển thị danh sách kết quả tương ứng với vị trí của QLineEdit
+            pos = self.lineEdit.mapToGlobal(QtCore.QPoint(0, 0))
+            x = pos.x() + self.lineEdit.width()
+            y = pos.y() + self.lineEdit.height()
+            # self.listWidget.setGeometry(x, y, 171, self.listWidget.sizeHintForRow(0) * min(5, len(results)))
+            self.listWidget.show()
+            print("show ne")
+            print(self.widget_2.children())
+
+        else:
+            self.listWidget.hide()
+
+    def searchCodes(self, query):
+        global  Sample_codes
+        # Hàm tìm kiếm trong danh sách mã mẫu
+        return [code for code in Sample_codes if query in code]
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("Chương trình Demo dự đoán điểm")
-        MainWindow.resize(1207, 757)
+        MainWindow.resize(1207, 905)
         font = QtGui.QFont()
         font.setBold(True)
         font.setItalic(True)
@@ -344,7 +408,7 @@ class Ui_MainWindow(object):
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem1)
         self.label_3 = QtWidgets.QLabel(self.centralwidget)
-        self.label_3.setGeometry(QtCore.QRect(10, 120, 251, 41))
+        self.label_3.setGeometry(QtCore.QRect(10, 160, 260, 41))
         font = QtGui.QFont()
         font.setFamily("Times New Roman")
         self.label_3.setFont(font)
@@ -353,7 +417,7 @@ class Ui_MainWindow(object):
         self.label_3.setTextFormat(QtCore.Qt.AutoText)
         self.label_3.setObjectName("label_3")
         self.comboBox = QtWidgets.QComboBox(self.centralwidget)
-        self.comboBox.setGeometry(QtCore.QRect(270, 120, 401, 41))
+        self.comboBox.setGeometry(QtCore.QRect(260, 160, 401, 41))
         self.comboBox.setStyleSheet("font: 14pt \"Times New Roman\";")
         self.comboBox.setObjectName("comboBox")
         self.comboBox.activated.connect(self.onActivatedComboBox)
@@ -371,7 +435,7 @@ class Ui_MainWindow(object):
         self.page_2.setObjectName("page_2")
         self.toolBox.addItem(self.page_2, "")
         self.scrollArea = QtWidgets.QScrollArea(self.centralwidget)
-        self.scrollArea.setGeometry(QtCore.QRect(20, 220, 651, 441))
+        self.scrollArea.setGeometry(QtCore.QRect(20, 370, 651, 441))
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
@@ -380,28 +444,30 @@ class Ui_MainWindow(object):
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
 
-        self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setGeometry(QtCore.QRect(10, 170, 331, 41))
-        self.label.setStyleSheet("background-color: rgb(217, 255, 231);\n"
-                                 "background-color: rgb(242, 248, 255);")
-        self.label.setObjectName("label")
+
         self.widget = QtWidgets.QWidget(self.centralwidget)
-        self.widget.setGeometry(QtCore.QRect(680, 100, 531, 571))
+        self.widget.setGeometry(QtCore.QRect(680, 150, 531, 671))
         self.widget.setStyleSheet("background-color: rgb(217, 255, 231);\n"
                                   "background-color: rgb(242, 248, 255);")
         self.widget.setObjectName("widget")
         self.checkBox_2 = QtWidgets.QCheckBox(self.widget)
-        self.checkBox_2.setGeometry(QtCore.QRect(50, 110, 231, 30))
+        self.checkBox_2.setGeometry(QtCore.QRect(50, 100, 231, 30))
         self.checkBox_2.setStyleSheet("font: 14pt \"Times New Roman\";")
         self.checkBox_2.setObjectName("checkBox_2")
+
+        self.checkBox_2.setEnabled(False) #TODO: VO HIEU HOA
+
         self.checkBox = QtWidgets.QCheckBox(self.widget)
-        self.checkBox.setGeometry(QtCore.QRect(50, 70, 201, 30))
+        self.checkBox.setGeometry(QtCore.QRect(50, 50, 201, 30))
         self.checkBox.setStyleSheet("font: 14pt \"Times New Roman\";\n"
                                     "background-color: rgb(217, 255, 231);\n"
                                     "background-color: rgb(242, 248, 255);")
         self.checkBox.setObjectName("checkBox")
+
+        self.checkBox.setEnabled(False) #TODO: VO HIEU HOA
+
         self.widget_3 = QtWidgets.QWidget(self.widget)
-        self.widget_3.setGeometry(QtCore.QRect(10, 250, 511, 311))
+        self.widget_3.setGeometry(QtCore.QRect(10, 250, 511, 411))
         self.widget_3.setStyleSheet("background-color: rgb(160, 240, 240);")
         self.widget_3.setObjectName("widget_3")
         self.horizontalLayoutWidget_2 = QtWidgets.QWidget(self.widget_3)
@@ -415,7 +481,7 @@ class Ui_MainWindow(object):
         self.label_5.setObjectName("label_5")
         self.horizontalLayout_6.addWidget(self.label_5)
         self.verticalLayoutWidget = QtWidgets.QWidget(self.widget_3)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect(10, 80, 491, 181))
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(10, 80, 491, 311))
         self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
         self.verticalLayout_6 = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
         self.verticalLayout_6.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
@@ -442,8 +508,9 @@ class Ui_MainWindow(object):
         self.indexComboBox = 0
 
         self.pushButton = QtWidgets.QPushButton(self.widget)
-        self.pushButton.setGeometry(QtCore.QRect(10, 170, 511, 61))
+        self.pushButton.setGeometry(QtCore.QRect(10, 160, 511, 61))
         self.pushButton.clicked.connect(self.onClickedPredict)
+        self.pushButton.setEnabled(False) #TODO :VO HIEU HOA
         font = QtGui.QFont()
         font.setFamily("Times New Roman")
         font.setPointSize(14)
@@ -463,12 +530,12 @@ class Ui_MainWindow(object):
         self.widget_3.raise_()
         self.pushButton.raise_()
         self.widget_2 = QtWidgets.QWidget(self.centralwidget)
-        self.widget_2.setGeometry(QtCore.QRect(-1, 100, 681, 571))
+        self.widget_2.setGeometry(QtCore.QRect(-1, 150, 681, 671))
         self.widget_2.setStyleSheet("background-color: rgb(217, 255, 231);\n"
                                     "background-color: rgb(242, 248, 255);")
         self.widget_2.setObjectName("widget_2")
         self.line = QtWidgets.QFrame(self.widget_2)
-        self.line.setGeometry(QtCore.QRect(670, 0, 20, 571))
+        self.line.setGeometry(QtCore.QRect(670, 0, 20, 671))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -479,13 +546,64 @@ class Ui_MainWindow(object):
         self.line.setFrameShape(QtWidgets.QFrame.VLine)
         self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line.setObjectName("line")
+        # TODO: COMPONENT
+
+
+        self.label_9 = QtWidgets.QLabel(self.widget_2)
+        self.label_9.setGeometry(QtCore.QRect(10, 70, 291, 31))
+        self.label_9.setObjectName("label_9")
+        # self.label = QtWidgets.QLabel(self.widget_2)
+        # self.label.setGeometry(QtCore.QRect(20, 320, 611, 41))
+        # self.label.setStyleSheet("background-color: rgb(217, 255, 231);\n"
+        #                          "background-color: rgb(242, 248, 255);")
+        # self.label.setObjectName("label")
+        self.lineEdit = QtWidgets.QLineEdit(self.widget_2)
+        self.lineEdit.setGeometry(QtCore.QRect(260, 60, 250, 41))
+        self.lineEdit.setStyleSheet("background-color: rgb(255, 255, 255);\n"
+                                    "font: 14pt \"Times New Roman\";")
+        self.lineEdit.setObjectName("lineEdit")
+        self.lineEdit.setPlaceholderText("Nhập mssv...")
+        self.lineEdit.textChanged.connect(self.showResults) #TODO: trigger line edit
+
+
+        # self.listWidget.itemClicked.connect(self.itemClicked)
+        #
+        #
+        # self.pushButton_10 = QtWidgets.QPushButton(self.widget_2)
+        # self.pushButton_10.setGeometry(QtCore.QRect(460, 60, 171, 41))
+        # self.pushButton_10.setStyleSheet("background-color: rgb(94, 189, 140);\n"
+        #                                  "font: 14pt \"Times New Roman\";")
+        # self.pushButton_10.setObjectName("pushButton_10")
+        # self.pushButton_10.clicked.connect(self.onPushLoad)
+
+
+        self.label_10 = QtWidgets.QLabel(self.widget_2)
+        self.label_10.setGeometry(QtCore.QRect(220, 140, 200, 41))
+        self.label_10.setObjectName("label_10")
+
+        self.label_12 = QtWidgets.QLabel(self.widget_2)
+        self.label_12.setGeometry(QtCore.QRect(415, 140, 100, 41))
+        self.label_12.setObjectName("label_12")
+        self.label_12.setStyleSheet("color: green;")
+
+        self.label_11 = QtWidgets.QLabel(self.widget_2)
+        self.label_11.setGeometry(QtCore.QRect(120, 175, 480, 41))
+        self.label_11.setObjectName("label_11")
+
+
+        self.listWidget = QtWidgets.QListWidget(self.widget_2)
+        self.listWidget.setGeometry(QtCore.QRect(260, 101, 250, 115))
+        self.listWidget.setStyleSheet("background-color: rgb(255, 255, 255);\n"
+                                    "font: 14pt \"Times New Roman\";")
+        self.listWidget.hide()
+        #
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
-        self.label_2.setGeometry(QtCore.QRect(700, 120, 421, 41))
+        self.label_2.setGeometry(QtCore.QRect(700, 160, 421, 41))
         self.label_2.setStyleSheet("background-color: rgb(217, 255, 231);\n"
                                    "background-color: rgb(242, 248, 255);")
         self.label_2.setObjectName("label_2")
         self.horizontalLayoutWidget_3 = QtWidgets.QWidget(self.centralwidget)
-        self.horizontalLayoutWidget_3.setGeometry(QtCore.QRect(0, 670, 1201, 71))
+        self.horizontalLayoutWidget_3.setGeometry(QtCore.QRect(0, 820, 1201, 71))
         self.horizontalLayoutWidget_3.setObjectName("horizontalLayoutWidget_3")
         self.horizontalLayout_7 = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget_3)
         self.horizontalLayout_7.setContentsMargins(0, 0, 0, 0)
@@ -497,6 +615,21 @@ class Ui_MainWindow(object):
         self.horizontalLayout_7.addWidget(self.label_6)
         spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_7.addItem(spacerItem3)
+        self.widget_5 = QtWidgets.QWidget(self.centralwidget)
+        self.widget_5.setGeometry(QtCore.QRect(0, 89, 1211, 61))
+        self.widget_5.setStyleSheet("background-color: rgb(153, 230, 230);")
+        self.widget_5.setObjectName("widget_5")
+        self.radioButton = QtWidgets.QRadioButton(self.widget_5)
+        self.radioButton.setGeometry(QtCore.QRect(380, 0, 181, 61))
+        self.radioButton.setStyleSheet("font: 75 14pt \"Times New Roman\";")
+        self.radioButton.setObjectName("radioButton")
+        self.radioButton.clicked.connect(self.radioButtonClicked)
+        self.radioButton_2 = QtWidgets.QRadioButton(self.widget_5)
+        self.radioButton_2.setGeometry(QtCore.QRect(690, 5, 161, 51))
+        self.radioButton_2.setStyleSheet("font: 75 14pt \"Times New Roman\";")
+        self.radioButton_2.setObjectName("radioButton_2")
+        self.radioButton_2.clicked.connect(self.radioButtonClicked)
+        self.radioButton.setChecked(True)
         self.widget_2.raise_()
         self.widget.raise_()
         self.horizontalLayoutWidget.raise_()
@@ -504,9 +637,10 @@ class Ui_MainWindow(object):
         self.comboBox.raise_()
         self.toolBox.raise_()
         self.scrollArea.raise_()
-        self.label.raise_()
+        # self.label.raise_()
         self.label_2.raise_()
         self.horizontalLayoutWidget_3.raise_()
+        self.widget_5.raise_()
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1207, 21))
@@ -533,7 +667,7 @@ class Ui_MainWindow(object):
                                         "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
                                         "p, li { white-space: pre-wrap; }\n"
                                         "</style></head><body style=\" font-family:\'Times New Roman\'; font-size:8pt; font-weight:400; font-style:normal;\">\n"
-                                        "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:14pt;\">Chọn môn học cần dự đoán:</span></p></body></html>"))
+                                        "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:16pt; font-weight:bold;\">Chọn môn học: </span></p></body></html>"))
         self.buildComboBox()
 
         self.toolBox.setItemText(self.toolBox.indexOf(self.page), _translate("MainWindow", "Page 1"))
@@ -550,13 +684,12 @@ class Ui_MainWindow(object):
         # self.lN1Label_3.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:12pt;\">Lần 1</span></p></body></html>"))
         # self.pushButton_7.setText(_translate("MainWindow", "Thêm"))
         # self.pushButton_6.setText(_translate("MainWindow", "Xóa"))
-        # self.groupBox_4.setTitle(_translate("MainWindow", "Giải tích"))
+        # self.groupBox_4.setTitle(_translate("MainWindow", "Giải tích"))  
         # self.lN1Label_4.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:12pt;\">Lần 1</span></p></body></html>"))
         # self.lN2Label.setText(_translate("MainWindow", "Lần 2"))
         # self.pushButton_8.setText(_translate("MainWindow", "Thêm"))
         # self.pushButton_9.setText(_translate("MainWindow", "Xóa"))
-        self.label.setText(_translate("MainWindow",
-                                      "<html><head/><body><p><span style=\" font-size:14pt;\">Nhập điểm tổng kết cảc môn đã học:</span></p></body></html>"))
+
         self.checkBox_2.setText(_translate("MainWindow", "Support Vector Machines"))
         self.checkBox.setText(_translate("MainWindow", "Linear Regression"))
         self.label_5.setText(_translate("MainWindow",
@@ -570,6 +703,25 @@ class Ui_MainWindow(object):
                                         "<html><head/><body><p><span style=\" font-size:14pt;\">Lựa chọn mô hình dự đoán của các thuật toán:</span></p></body></html>"))
         self.label_6.setText(_translate("MainWindow",
                                         "<html><head/><body><p><span style=\" font-size:12pt;\">(*) Mọi kết quả dự đoán đều mang tính chất tham khảo</span></p></body></html>"))
+        self.radioButton.setToolTip(_translate("MainWindow", "<html><head/><body><p><br/></p></body></html>"))
+        self.radioButton.setText(_translate("MainWindow", "KIỂM CHỨNG"))
+        self.radioButton_2.setText(_translate("MainWindow", "DỰ ĐOÁN"))
+        # self.pushButton_10.setText(_translate("MainWindow", "LOAD DỮ LIỆU"))
+        # self.label_10.setText(_translate("MainWindow",
+        #                                  "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        #                                  "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+        #                                  "p, li { white-space: pre-wrap; }\n"
+        #                                  "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8pt; font-weight:400; font-style:normal;\">\n"
+        #                                  "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:14pt;\">Kết quả thực tế: </span><span style=\" font-size:14pt; font-weight:600;\">ĐẬU</span></p></body></html>"))
+        self.label_9.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:16pt; font-weight:bold;\">Nhập mã số sinh viên:</span></p></body></html>"))
+        self.lineEdit.setToolTip(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:14pt;\">N19DCCN132</span></p></body></html>"))
+        # self.label.setText(_translate("MainWindow",
+        #                               "<html><head/><body><p><span style=\" font-size:14pt;\">Bảng điểm tổng kết các môn đã học của sinh viên: </span></p></body></html>"))
+        self.label_11.setText(_translate("MainWindow","<html><head/><body><p><span style=\" font-size:14pt; font-weight:bold;\">THÔNG TIN ĐIỂM TỔNG KẾT CỦA SINH VIÊN</span></p></body></html>"))
+        self.label_10.setText(_translate("MainWindow","<html><head/><body><p><span style=\" font-size:14pt; font-weight:bold;\">KẾT QUẢ THỰC TẾ: </span></p></body></html>"))
+        self.label_12.setText(_translate("MainWindow",
+            "<html><head/><body><p><span style=\" font-size:16pt; font-weight:bold;\">ĐẬU </span></p></body></html>"
+        ))
 
 
 if __name__ == "__main__":

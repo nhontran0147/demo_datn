@@ -11,6 +11,7 @@ import pickle
 
 from PyQt5 import QtCore, QtGui, QtWidgets, sip
 from PyQt5.QtGui import QDoubleValidator
+
 from PyQt5.QtWidgets import QMessageBox
 
 dsMonhoc = [
@@ -22,7 +23,7 @@ dsMonhoc = [
 ]
 dsMonQuaKhu = [
 
-    ["Ngôn ngữ lập trình C++", "Tin học cơ sở 2", "Toán rời rạc 2"],
+    ["Ngôn ngữ lập trình C++", "Tin học cơ sở 2", "Toán rời rạc 1"],
     ["Ngôn ngữ lập trình C++", "Cấu trúc dữ liệu và giải thuật"],
     [
         "Ngôn ngữ lập trình C++",
@@ -58,6 +59,7 @@ lr_models = [
 
 lr =  "Mô hình Linear Regression:       "
 svm = "Mô hình Support Vector Machines: "
+INDEX_DEFAULT = 0
 
 class FakeGroupBox:
     def __init__(self, label_7, label_8):
@@ -184,11 +186,17 @@ class Ui_MainWindow(object):
     def onClickedPredict(self):
         _translate = QtCore.QCoreApplication.translate
 
+        global INDEX_DEFAULT
         print("Predict")
+        print(f"index_defaut = {INDEX_DEFAULT}")
         arr = []
+        arr_tb = []
         for i in range(len(self.listgroup)):
             max = 0.0
+            tb = 0.0
+            temp =0
             for j in self.listgroup[i].edit:
+                temp +=1
                 if len(j.text()) == 0:
                     msg = QtWidgets.QMessageBox()
                     msg.setIcon(QtWidgets.QMessageBox.Information)
@@ -200,9 +208,15 @@ class Ui_MainWindow(object):
                 value = float(j.text())
                 if value > max:
                     max = value
+                tb += value
             arr.append(max)
+            tb /= temp
+            arr_tb.append(tb)
         predictInput = []
-        predictInput.append(arr)
+        if INDEX_DEFAULT == 1:
+            predictInput.append(arr_tb)
+        else:
+            predictInput.append(arr)
 
         print(self.checkBox.isChecked())  # Linear
         print(self.checkBox_2.isChecked())  # svm
@@ -290,7 +304,8 @@ class Ui_MainWindow(object):
 
     def updateScoll(self, index):
         _translate = QtCore.QCoreApplication.translate
-
+        global INDEX_DEFAULT
+        INDEX_DEFAULT = index
         listQuaKhu = dsMonQuaKhu[index]
         print(listQuaKhu)
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
