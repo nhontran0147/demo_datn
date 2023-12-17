@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import pickle
+import pandas as pd
 
 # Form implementation generated from reading ui file 'untitled.ui'
 #
@@ -12,7 +13,7 @@ import pickle
 from PyQt5 import QtCore, QtGui, QtWidgets, sip
 from PyQt5.QtGui import QDoubleValidator
 
-from PyQt5.QtWidgets import QMessageBox, QListWidgetItem, QListWidget
+from PyQt5.QtWidgets import QMessageBox, QListWidgetItem, QListWidget, QStackedWidget
 
 dsMonhoc = [
     "Cấu trúc dữ liệu và giải thuật",
@@ -24,7 +25,7 @@ dsMonhoc = [
 dsMonQuaKhu = [
 
     ["Ngôn ngữ lập trình C++", "Tin học cơ sở 2", "Toán rời rạc 1"],
-    ["Ngôn ngữ lập trình C++", "Cấu trúc dữ liệu và giải thuật"],
+    ["Ngôn ngữ lập trình C++", "Tin học cơ sở 2"],
     [
         "Ngôn ngữ lập trình C++",
         "Lập trình hướng đối tượng",
@@ -32,6 +33,12 @@ dsMonQuaKhu = [
     ],
     # [],
     # [],
+]
+
+dsMaQuaKhu = [
+    ["INT1339","INT1155","INT1358"],
+    ["INT1339","INT1155"],
+    ["INT1339","INT1332","INT1313"]
 ]
 
 
@@ -57,10 +64,14 @@ lr_models = [
     lr_1306, lr_1332, lr_1434
 ]
 
-lr =  "Mô hình Linear Regression:       "
+lr =  "Mô hình Hồi quy:       "
+
 svm = "Mô hình Support Vector Machines: "
 INDEX_DEFAULT = 0
 Sample_codes = ["ABC123", "XYZ4q516", "DEFq7819", "GHI123", "JKL41q56", "MNO1789", "PQR123", "STU456", "VWX789", "YZA123"]
+IS_KC = True
+
+
 
 
 class FakeGroupBox:
@@ -136,6 +147,7 @@ class FakeGroupBox:
             self.pushButton_2.setEnabled(False)
 
     def setup(self, scrollAreaWidgetContents):
+        global IS_KC
         _translate = QtCore.QCoreApplication.translate
         self.groupBox = QtWidgets.QGroupBox(scrollAreaWidgetContents)
         font = QtGui.QFont()
@@ -162,29 +174,56 @@ class FakeGroupBox:
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
 
-        self.pushButton = QtWidgets.QPushButton(self.groupBox)
-        self.pushButton.setStyleSheet("font: 12pt \"Times New Roman\";")
-        self.pushButton.setObjectName("pushButton")
-        self.horizontalLayout.addWidget(self.pushButton)
-        self.pushButton_2 = QtWidgets.QPushButton(self.groupBox)
-        self.pushButton_2.setStyleSheet("font: 12pt \"Times New Roman\";")
-        self.pushButton_2.setObjectName("pushButton_4")
-        self.horizontalLayout.addWidget(self.pushButton_2)
-        self.verticalLayout.addLayout(self.horizontalLayout)
-        self.pushButton.setText(_translate("MainWindow", "Thêm"))
-        self.pushButton_2.setText(_translate("MainWindow", "Xóa"))
-        self.pushButton.clicked.connect(self.onActionButtonAdd)
-        self.pushButton_2.clicked.connect(self.onActionButtonDel)
-        self.pushButton_2.setEnabled(False)
 
+        if not IS_KC:
+            self.pushButton = QtWidgets.QPushButton(self.groupBox)
+            self.pushButton.setStyleSheet("font: 12pt \"Times New Roman\";")
+            self.pushButton.setObjectName("pushButton")
+            self.horizontalLayout.addWidget(self.pushButton)
+            self.pushButton_2 = QtWidgets.QPushButton(self.groupBox)
+            self.pushButton_2.setStyleSheet("font: 12pt \"Times New Roman\";")
+            self.pushButton_2.setObjectName("pushButton_4")
+            self.horizontalLayout.addWidget(self.pushButton_2)
+            self.verticalLayout.addLayout(self.horizontalLayout)
+            self.pushButton.setText(_translate("MainWindow", "Thêm"))
+            self.pushButton_2.setText(_translate("MainWindow", "Xóa"))
+            self.pushButton.clicked.connect(self.onActionButtonAdd)
+            self.pushButton_2.clicked.connect(self.onActionButtonDel)
+            self.pushButton_2.setEnabled(False)
+        else:
+            self.edit[0].setEnabled(False)
 
 class Ui_MainWindow(object):
 
-    def __init__(self):
+    def __init__(self): #TODO INIT
+        self.widget_2 = None
+        self.label_9 = None
         self.verticalLayout_2 = None
         self.label_7 = None
         self.label_8 = None
-        self.is_load_success = False
+        self.is_kiem_chung = True
+        self.label_13 = None
+        self.sv_array = []
+        self.lineEdit = None
+        self.df = []
+        self.load_sv()
+
+    def load_sv(self):
+        # Đường dẫn đến file CSV của bạn
+        my_url = "."
+        # Đọc dữ liệu từ file CSV vào DataFrame
+        sv_1306 = pd.read_csv(f"{my_url}/data/kiem_chung/INT1306_data_kiem_chung.csv")
+        sv_1332 = pd.read_csv(f"{my_url}/data/kiem_chung/INT1332_data_kiem_chung.csv")
+        sv_1434 = pd.read_csv(f"{my_url}/data/kiem_chung/INT1434_3_data_kiem_chung.csv")
+        # Lấy ra tất cả các giá trị trong cột "MaSV" và loại bỏ các giá trị trùng lặp
+        sv_1306_array = sv_1306['MaSV'].unique()
+        sv_1332_array = sv_1332['MaSV'].unique()
+        sv_1434_array = sv_1434['MaSV'].unique()
+        self.sv_array = [sv_1306_array, sv_1332_array, sv_1434_array]
+        self.df.append(sv_1306)
+        self.df.append(sv_1332)
+        self.df.append(sv_1434)
+
 
     def onClickedPredict(self):
         _translate = QtCore.QCoreApplication.translate
@@ -194,10 +233,12 @@ class Ui_MainWindow(object):
         print(f"index_defaut = {INDEX_DEFAULT}")
         arr = []
         arr_tb = []
+        arr_moi = []
         for i in range(len(self.listgroup)):
             max = 0.0
             tb = 0.0
             temp =0
+            moi = 0
             for j in self.listgroup[i].edit:
                 temp +=1
                 if len(j.text()) == 0:
@@ -212,14 +253,16 @@ class Ui_MainWindow(object):
                 if value > max:
                     max = value
                 tb += value
+                moi = value
             arr.append(max)
             tb /= temp
             arr_tb.append(tb)
         predictInput = []
-        if INDEX_DEFAULT == 1:
-            predictInput.append(arr_tb)
-        else:
-            predictInput.append(arr)
+        # if INDEX_DEFAULT == 1:
+        #     predictInput.append(arr_tb)
+        # else:
+        #     predictInput.append(arr)
+        predictInput.append(arr_tb)
 
         print(self.checkBox.isChecked())  # Linear
         print(self.checkBox_2.isChecked())  # svm
@@ -307,6 +350,8 @@ class Ui_MainWindow(object):
 
     def updateScoll(self, index):
         _translate = QtCore.QCoreApplication.translate
+        if self.lineEdit is not None and self.is_kiem_chung:
+            self.lineEdit.clear()
         global INDEX_DEFAULT
         INDEX_DEFAULT = index
         listQuaKhu = dsMonQuaKhu[index]
@@ -331,10 +376,29 @@ class Ui_MainWindow(object):
             self.comboBox.addItem("")
 
     def radioButtonClicked(self):
+        global IS_KC
         if self.radioButton.isChecked():
-            print("KIỂM CHỨNG is checked.")
+            IS_KC = True
+            self.label_9.show()
+            self.lineEdit.show()
+            self.label_10.show()
+            self.label_12.show()
+            self.label_11.show()
+            self.scrollArea.show()
+            self.label_13.hide()
+            self.scrollArea.setGeometry(QtCore.QRect(20, 370, 651, 441))
         elif self.radioButton_2.isChecked():
-            print("DỰ ĐOÁN is unchecked.")
+            IS_KC = False
+            self.label_9.hide()
+            self.lineEdit.hide()
+            self.label_10.hide()
+            self.label_12.hide()
+            self.label_11.hide()
+            self.scrollArea.setGeometry(QtCore.QRect(20, 270, 651, 541))
+            # self.scrollArea.hide()
+
+            self.label_13.show()
+        self.updateScoll(0)
 
     def onPushLoad(self):
         self.is_load_success = not self.is_load_success
@@ -355,14 +419,12 @@ class Ui_MainWindow(object):
             # Tìm kiếm và hiển thị top 5 kết quả gần khớp nhất
             results = self.searchCodes(text)
             print(results)
-            for result in results[:5]:
+            for result in results:
                 item = QtWidgets.QListWidgetItem(result)
                 self.listWidget.addItem(item)
 
             # Hiển thị danh sách kết quả tương ứng với vị trí của QLineEdit
             pos = self.lineEdit.mapToGlobal(QtCore.QPoint(0, 0))
-            x = pos.x() + self.lineEdit.width()
-            y = pos.y() + self.lineEdit.height()
             # self.listWidget.setGeometry(x, y, 171, self.listWidget.sizeHintForRow(0) * min(5, len(results)))
             self.listWidget.show()
             print("show ne")
@@ -372,9 +434,28 @@ class Ui_MainWindow(object):
             self.listWidget.hide()
 
     def searchCodes(self, query):
-        global  Sample_codes
+        query = query.upper()
+        global INDEX_DEFAULT
         # Hàm tìm kiếm trong danh sách mã mẫu
-        return [code for code in Sample_codes if query in code]
+        return [code for code in self.sv_array[INDEX_DEFAULT] if query in code]
+
+    def item_double_clicked(self, item): #TODO fine sv
+        # Lấy văn bản của mục và đặt nó vào line_edit
+        global INDEX_DEFAULT
+        masv = item.text()
+        filtered_records = self.df[INDEX_DEFAULT][self.df[INDEX_DEFAULT]['MaSV'] == masv]
+        DiemHP_by_MaMH = filtered_records.groupby('MaMH')['DiemHP'].apply(list).to_dict()
+        print(DiemHP_by_MaMH) #TODO MAP TABLE INFORMATION
+
+        self.lineEdit.setText(item.text())
+
+        # Ẩn QListWidget
+
+        self.listWidget.hide()
+        self.label_10.setEnabled(True)
+        self.label_11.setEnabled(True)
+
+
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("Chương trình Demo dự đoán điểm")
@@ -422,6 +503,7 @@ class Ui_MainWindow(object):
         self.comboBox.setObjectName("comboBox")
         self.comboBox.activated.connect(self.onActivatedComboBox)
 
+        self.stacked_widget = QStackedWidget()
 
         self.toolBox = QtWidgets.QToolBox(self.centralwidget)
         self.toolBox.setGeometry(QtCore.QRect(-270, 540, 85, 147))
@@ -529,41 +611,46 @@ class Ui_MainWindow(object):
         self.checkBox.raise_()
         self.widget_3.raise_()
         self.pushButton.raise_()
+
         self.widget_2 = QtWidgets.QWidget(self.centralwidget)
         self.widget_2.setGeometry(QtCore.QRect(-1, 150, 681, 671))
         self.widget_2.setStyleSheet("background-color: rgb(217, 255, 231);\n"
                                     "background-color: rgb(242, 248, 255);")
         self.widget_2.setObjectName("widget_2")
-        self.line = QtWidgets.QFrame(self.widget_2)
-        self.line.setGeometry(QtCore.QRect(670, 0, 20, 671))
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.line.sizePolicy().hasHeightForWidth())
-        self.line.setSizePolicy(sizePolicy)
-        self.line.setStyleSheet("color: rgb(0, 0, 0);")
-        self.line.setLineWidth(2)
-        self.line.setFrameShape(QtWidgets.QFrame.VLine)
-        self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line.setObjectName("line")
-        # TODO: COMPONENT
+
+        if self.is_kiem_chung:
+            self.line = QtWidgets.QFrame(self.widget_2)
+            self.line.setGeometry(QtCore.QRect(670, 0, 20, 671))
+            sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
+            sizePolicy.setHorizontalStretch(0)
+            sizePolicy.setVerticalStretch(0)
+            sizePolicy.setHeightForWidth(self.line.sizePolicy().hasHeightForWidth())
+            self.line.setSizePolicy(sizePolicy)
+            self.line.setStyleSheet("color: rgb(0, 0, 0);")
+            self.line.setLineWidth(2)
+            self.line.setFrameShape(QtWidgets.QFrame.VLine)
+            self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
+            self.line.setObjectName("line")
+            self.label_9 = QtWidgets.QLabel(self.widget_2)
+            self.label_9.setGeometry(QtCore.QRect(10, 70, 291, 31))
+            self.label_9.setObjectName("label_9")
+            self.lineEdit = QtWidgets.QLineEdit(self.widget_2)
+            self.lineEdit.setGeometry(QtCore.QRect(260, 60, 250, 41))
+            self.lineEdit.setStyleSheet("background-color: rgb(255, 255, 255);\n"
+                                        "font: 14pt \"Times New Roman\";")
+            self.lineEdit.setObjectName("lineEdit")
+            self.lineEdit.setPlaceholderText("Nhập mssv...")
+            self.lineEdit.textChanged.connect(self.showResults)  # TODO: trigger line edit
+        else:
+            print("DU DOAN")
 
 
-        self.label_9 = QtWidgets.QLabel(self.widget_2)
-        self.label_9.setGeometry(QtCore.QRect(10, 70, 291, 31))
-        self.label_9.setObjectName("label_9")
         # self.label = QtWidgets.QLabel(self.widget_2)
         # self.label.setGeometry(QtCore.QRect(20, 320, 611, 41))
         # self.label.setStyleSheet("background-color: rgb(217, 255, 231);\n"
         #                          "background-color: rgb(242, 248, 255);")
         # self.label.setObjectName("label")
-        self.lineEdit = QtWidgets.QLineEdit(self.widget_2)
-        self.lineEdit.setGeometry(QtCore.QRect(260, 60, 250, 41))
-        self.lineEdit.setStyleSheet("background-color: rgb(255, 255, 255);\n"
-                                    "font: 14pt \"Times New Roman\";")
-        self.lineEdit.setObjectName("lineEdit")
-        self.lineEdit.setPlaceholderText("Nhập mssv...")
-        self.lineEdit.textChanged.connect(self.showResults) #TODO: trigger line edit
+
 
 
         # self.listWidget.itemClicked.connect(self.itemClicked)
@@ -580,6 +667,7 @@ class Ui_MainWindow(object):
         self.label_10 = QtWidgets.QLabel(self.widget_2)
         self.label_10.setGeometry(QtCore.QRect(220, 140, 200, 41))
         self.label_10.setObjectName("label_10")
+        self.label_10.setEnabled(False)
 
         self.label_12 = QtWidgets.QLabel(self.widget_2)
         self.label_12.setGeometry(QtCore.QRect(415, 140, 100, 41))
@@ -589,12 +677,20 @@ class Ui_MainWindow(object):
         self.label_11 = QtWidgets.QLabel(self.widget_2)
         self.label_11.setGeometry(QtCore.QRect(120, 175, 480, 41))
         self.label_11.setObjectName("label_11")
+        self.label_11.setEnabled(False)
+
+
+        self.label_13 = QtWidgets.QLabel(self.widget_2)
+        self.label_13.setGeometry(QtCore.QRect(10, 70, 600, 41))
+        self.label_13.setObjectName("label_13")
+        self.label_13.hide()
 
 
         self.listWidget = QtWidgets.QListWidget(self.widget_2)
         self.listWidget.setGeometry(QtCore.QRect(260, 101, 250, 115))
         self.listWidget.setStyleSheet("background-color: rgb(255, 255, 255);\n"
                                     "font: 14pt \"Times New Roman\";")
+        self.listWidget.itemDoubleClicked.connect(self.item_double_clicked)
         self.listWidget.hide()
         #
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
@@ -698,13 +794,13 @@ class Ui_MainWindow(object):
                                         f"<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">- {lr}</span></p></body></html>"))
         self.label_8.setText(_translate("MainWindow",
                                         f"<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">- {svm}</span></p></body></html>"))
-        self.pushButton.setText(_translate("MainWindow", "DỰ ĐOÁN*"))
+        self.pushButton.setText(_translate("MainWindow", "KIỂM NGHIỆM*"))
         self.label_2.setText(_translate("MainWindow",
                                         "<html><head/><body><p><span style=\" font-size:14pt;\">Lựa chọn mô hình dự đoán của các thuật toán:</span></p></body></html>"))
         self.label_6.setText(_translate("MainWindow",
                                         "<html><head/><body><p><span style=\" font-size:12pt;\">(*) Mọi kết quả dự đoán đều mang tính chất tham khảo</span></p></body></html>"))
         self.radioButton.setToolTip(_translate("MainWindow", "<html><head/><body><p><br/></p></body></html>"))
-        self.radioButton.setText(_translate("MainWindow", "KIỂM CHỨNG"))
+        self.radioButton.setText(_translate("MainWindow", "KIỂM NGHIỆM"))
         self.radioButton_2.setText(_translate("MainWindow", "DỰ ĐOÁN"))
         # self.pushButton_10.setText(_translate("MainWindow", "LOAD DỮ LIỆU"))
         # self.label_10.setText(_translate("MainWindow",
@@ -713,15 +809,16 @@ class Ui_MainWindow(object):
         #                                  "p, li { white-space: pre-wrap; }\n"
         #                                  "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8pt; font-weight:400; font-style:normal;\">\n"
         #                                  "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:14pt;\">Kết quả thực tế: </span><span style=\" font-size:14pt; font-weight:600;\">ĐẬU</span></p></body></html>"))
-        self.label_9.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:16pt; font-weight:bold;\">Nhập mã số sinh viên:</span></p></body></html>"))
-        self.lineEdit.setToolTip(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:14pt;\">N19DCCN132</span></p></body></html>"))
+        if self.is_kiem_chung:
+            self.label_9.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:16pt; font-weight:bold;\">Nhập mã số sinh viên:</span></p></body></html>"))
+            self.lineEdit.setToolTip(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:14pt;\">N19DCCN132</span></p></body></html>"))
         # self.label.setText(_translate("MainWindow",
         #                               "<html><head/><body><p><span style=\" font-size:14pt;\">Bảng điểm tổng kết các môn đã học của sinh viên: </span></p></body></html>"))
         self.label_11.setText(_translate("MainWindow","<html><head/><body><p><span style=\" font-size:14pt; font-weight:bold;\">THÔNG TIN ĐIỂM TỔNG KẾT CỦA SINH VIÊN</span></p></body></html>"))
         self.label_10.setText(_translate("MainWindow","<html><head/><body><p><span style=\" font-size:14pt; font-weight:bold;\">KẾT QUẢ THỰC TẾ: </span></p></body></html>"))
-        self.label_12.setText(_translate("MainWindow",
-            "<html><head/><body><p><span style=\" font-size:16pt; font-weight:bold;\">ĐẬU </span></p></body></html>"
-        ))
+
+        self.label_13.setText(_translate("MainWindow","<html><head/><body><p><span style=\" font-size:16pt; font-weight:bold;\">Nhập thông tin điểm tổng kết của các môn bên dưới: </span></p></body></html>"))
+
 
 
 if __name__ == "__main__":

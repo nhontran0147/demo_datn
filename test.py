@@ -1,52 +1,41 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLineEdit, QListWidget, QListWidgetItem
-from PyQt5.QtCore import Qt
-import sys
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QListWidget, QLineEdit, QPushButton
 
-class MyWidget(QWidget):
+class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.initUI()
-
-    def initUI(self):
-        layout = QVBoxLayout(self)
-
-        # Ô nhập liệu
-        self.lineEdit = QLineEdit(self)
-        self.lineEdit.setPlaceholderText("Enter text...")
-        self.lineEdit.textChanged.connect(self.showResults)
-        layout.addWidget(self.lineEdit)
-
-        # Danh sách hiển thị kết quả
         self.listWidget = QListWidget(self)
-        layout.addWidget(self.listWidget)
+        self.listWidget.setGeometry(260, 101, 250, 115)
+        self.listWidget.setStyleSheet("background-color: rgb(255, 255, 255);\n"
+                                      "font: 14pt \"Times New Roman\";")
 
-        # Danh sách mã mẫu (fake data)
-        self.sample_codes = ["ABC123", "XYZ156", "DEF189", "GHI123", "JKL456", "MNO789", "PQR123", "STU456", "VWX789", "YZA123"]
+        # Thêm các mục vào QListWidget
+        items = ["Item 1", "Item 2", "Item 3"]
+        self.listWidget.addItems(items)
 
-        self.setGeometry(300, 300, 300, 50)
-        self.setWindowTitle('Search Example')
-        self.show()
+        self.line_edit = QLineEdit(self)
+        self.line_edit.setGeometry(260, 250, 250, 30)
 
-    def showResults(self):
-        # Hiển thị danh sách kết quả khi có sự kiện nhập liệu
-        self.listWidget.clear()
-        text = self.lineEdit.text().upper()
+        button = QPushButton("Show List", self)
+        button.setGeometry(260, 300, 250, 30)
+        button.clicked.connect(self.show_list)
 
-        if text:
-            # Tìm kiếm và hiển thị top 10 kết quả gần khớp nhất
-            results = self.searchCodes(text)
-            for result in results[:10]:
-                item = QListWidgetItem(result)
-                self.listWidget.addItem(item)
-        else:
-            self.listWidget.clear()
+        # Kết nối sự kiện itemDoubleClicked với hàm xử lý
+        self.listWidget.itemDoubleClicked.connect(self.item_double_clicked)
 
-    def searchCodes(self, query):
-        # Hàm tìm kiếm trong danh sách mã mẫu
-        return [code for code in self.sample_codes if query in code]
+    def item_double_clicked(self, item):
+        # Lấy văn bản của mục và đặt nó vào line_edit
+        self.line_edit.setText(item.text())
+
+        # Ẩn QListWidget
+        self.listWidget.hide()
+
+    def show_list(self):
+        # Hiển thị lại QListWidget nếu nó đang bị ẩn
+        self.listWidget.show()
 
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    widget = MyWidget()
-    sys.exit(app.exec_())
+    app = QApplication([])
+    main_window = MainWindow()
+    main_window.show()
+    app.exec_()

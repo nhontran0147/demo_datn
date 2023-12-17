@@ -327,6 +327,9 @@ class Ui_MainWindow(object):
         for i in range(0, len(dsMonhoc)):
             self.comboBox.addItem("")
 
+    def switch_screen(self):
+
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("Chương trình Demo dự đoán điểm")
         MainWindow.resize(1207, 757)
