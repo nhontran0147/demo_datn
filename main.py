@@ -115,6 +115,8 @@ class FakeGroupBox:
             return
 
     def onActionButtonAdd(self):
+        global IS_KC
+
         validator = QDoubleValidator(0, 10, 1)
         _translate = QtCore.QCoreApplication.translate
 
@@ -132,8 +134,10 @@ class FakeGroupBox:
         self.edit[lenEdit].setValidator(validator)
         self.edit[lenEdit].textChanged.connect(self.onTextChanged)
         self.formLayout.setWidget(int(count), QtWidgets.QFormLayout.FieldRole, self.edit[lenEdit])
-        if len(self.label) > 1:
+        if len(self.label) > 1 and not IS_KC:
             self.pushButton_2.setEnabled(True)
+        if IS_KC:
+            self.edit[lenEdit].setEnabled(False)
 
     def onActionButtonDel(self):
         count = int(self.formLayout.count() / 2)
@@ -192,7 +196,13 @@ class FakeGroupBox:
             self.pushButton_2.setEnabled(False)
         else:
             self.edit[0].setEnabled(False)
-
+            
+    def fill_data(self, data):
+        print("data = ", data)
+        for i in range(len(data)-1):
+            self.onActionButtonAdd()
+        for i in range(len(data)):
+            self.edit[i].setText(str(data[i]))
 class Ui_MainWindow(object):
 
     def __init__(self): #TODO INIT
@@ -356,6 +366,9 @@ class Ui_MainWindow(object):
         INDEX_DEFAULT = index
         listQuaKhu = dsMonQuaKhu[index]
         print(listQuaKhu)
+        self.checkBox.setChecked(False)
+        self.checkBox_2.setChecked(False)
+
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 628, 458))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
@@ -376,18 +389,27 @@ class Ui_MainWindow(object):
             self.comboBox.addItem("")
 
     def radioButtonClicked(self):
+        _translate = QtCore.QCoreApplication.translate
         global IS_KC
         if self.radioButton.isChecked():
             IS_KC = True
             self.label_9.show()
             self.lineEdit.show()
             self.label_10.show()
+            self.label_12.clear()
             self.label_12.show()
             self.label_11.show()
             self.scrollArea.show()
             self.label_13.hide()
             self.scrollArea.setGeometry(QtCore.QRect(20, 370, 651, 441))
+            self.label_10.setEnabled(False)
+            self.label_11.setEnabled(False)
+            self.checkBox.setEnabled(False)
+            self.checkBox_2.setEnabled(False)
+            self.pushButton.setEnabled(False)
+            self.pushButton.setText(_translate("MainWindow", "KIỂM CHỨNG*"))
         elif self.radioButton_2.isChecked():
+            print("uararararra")
             IS_KC = False
             self.label_9.hide()
             self.lineEdit.hide()
@@ -395,6 +417,12 @@ class Ui_MainWindow(object):
             self.label_12.hide()
             self.label_11.hide()
             self.scrollArea.setGeometry(QtCore.QRect(20, 270, 651, 541))
+            self.checkBox.setEnabled(True)
+            self.checkBox_2.setEnabled(True)
+            # self.checkBox.setChecked(False)
+            # self.checkBox_2.setChecked(False)
+            self.pushButton.setEnabled(True)
+            self.pushButton.setText(_translate("MainWindow", "DỰ ĐOÁN*"))
             # self.scrollArea.hide()
 
             self.label_13.show()
@@ -411,12 +439,45 @@ class Ui_MainWindow(object):
             self.checkBox_2.setEnabled(False)
             self.pushButton.setEnabled(False)
 
+    def end_pre(self):
+        _translate = QtCore.QCoreApplication.translate
+        global INDEX_DEFAULT
+        print("hêrêrêrẻ")
+        if not self.radioButton_2.isChecked():
+            self.checkBox.setEnabled(False)
+            self.checkBox_2.setEnabled(False)
+            self.pushButton.setEnabled(False)
+        self.label_12.clear()
+        self.label_10.setEnabled(False)
+        self.label_11.setEnabled(False)
+        listQuaKhu = dsMonQuaKhu[INDEX_DEFAULT]
+        self.scrollAreaWidgetContents = QtWidgets.QWidget()
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 628, 458))
+        self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.listgroup = []
+        for i in range(0, len(dsMonQuaKhu[INDEX_DEFAULT])):
+            fakeGroupBox = FakeGroupBox(self.label_7, self.label_8)
+            fakeGroupBox.setup(self.scrollAreaWidgetContents)
+            fakeGroupBox.groupBox.setStyleSheet("font-size: 17px;")  # Thay đổi kích thước font là 16px
+            fakeGroupBox.groupBox.setTitle(_translate("MainWindow", listQuaKhu[i]))
+            self.listgroup.append(fakeGroupBox)
+            self.verticalLayout_2.addWidget(fakeGroupBox.groupBox)
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
+
+
     def showResults(self, text):
+        _translate = QtCore.QCoreApplication.translate
         # Hiển thị danh sách kết quả khi có sự kiện nhập liệu
         self.listWidget.clear()
-
+        self.end_pre()
+        self.label_7.setText(_translate("MainWindow",
+                                        f"<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">- {lr}</span></p></body></html>"))
+        self.label_8.setText(_translate("MainWindow",
+                                        f"<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">- {svm}</span></p></body></html>"))
+        
         if text:
-            # Tìm kiếm và hiển thị top 5 kết quả gần khớp nhất
             results = self.searchCodes(text)
             print(results)
             for result in results:
@@ -440,21 +501,55 @@ class Ui_MainWindow(object):
         return [code for code in self.sv_array[INDEX_DEFAULT] if query in code]
 
     def item_double_clicked(self, item): #TODO fine sv
+        _translate = QtCore.QCoreApplication.translate
+
         # Lấy văn bản của mục và đặt nó vào line_edit
         global INDEX_DEFAULT
         masv = item.text()
         filtered_records = self.df[INDEX_DEFAULT][self.df[INDEX_DEFAULT]['MaSV'] == masv]
         DiemHP_by_MaMH = filtered_records.groupby('MaMH')['DiemHP'].apply(list).to_dict()
-        print(DiemHP_by_MaMH) #TODO MAP TABLE INFORMATION
+        # print(DiemHP_by_MaMH) #TODO MAP TABLE INFORMATION
 
         self.lineEdit.setText(item.text())
 
         # Ẩn QListWidget
 
         self.listWidget.hide()
+        
+        kq = list(set(filtered_records['DatHP']))
+        print("kq = ", kq)
+        self.label_12.clear()
+        if kq[0] == 1:
+            self.label_12.setStyleSheet("color: green;")
+            self.label_12.setText(_translate("MainWindow","<html><head/><body><p><span style=\" font-size:16pt; font-weight:bold;\">ĐẬU</span></p></body></html>"))
+        else:
+            self.label_12.setStyleSheet("color: red;")
+            self.label_12.setText(_translate("MainWindow","<html><head/><body><p><span style=\" font-size:16pt; font-weight:bold;\">RỚT</span></p></body></html>"))
+
         self.label_10.setEnabled(True)
         self.label_11.setEnabled(True)
-
+        self.label_12.setEnabled(True)
+        
+        listQuaKhu = dsMonQuaKhu[INDEX_DEFAULT]
+        listMa = dsMaQuaKhu[INDEX_DEFAULT]
+        self.scrollAreaWidgetContents = QtWidgets.QWidget()
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 628, 458))
+        self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.listgroup = []
+        for i in range(0, len(dsMonQuaKhu[INDEX_DEFAULT])):
+            fakeGroupBox = FakeGroupBox(self.label_7, self.label_8)
+            fakeGroupBox.setup(self.scrollAreaWidgetContents)
+            fakeGroupBox.fill_data(DiemHP_by_MaMH[listMa[i]])
+            fakeGroupBox.groupBox.setStyleSheet("font-size: 17px;")  # Thay đổi kích thước font là 16px
+            fakeGroupBox.groupBox.setTitle(_translate("MainWindow", listQuaKhu[i]))
+            self.listgroup.append(fakeGroupBox)
+            self.verticalLayout_2.addWidget(fakeGroupBox.groupBox)
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
+        self.pushButton.setEnabled(True)
+        self.checkBox.setEnabled(True)
+        self.checkBox_2.setEnabled(True)
 
 
     def setupUi(self, MainWindow):
@@ -757,7 +852,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindoww"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Chương trình DEMO"))
         self.label_3.setText(_translate("MainWindow",
                                         "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
                                         "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
@@ -794,13 +889,13 @@ class Ui_MainWindow(object):
                                         f"<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">- {lr}</span></p></body></html>"))
         self.label_8.setText(_translate("MainWindow",
                                         f"<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">- {svm}</span></p></body></html>"))
-        self.pushButton.setText(_translate("MainWindow", "KIỂM NGHIỆM*"))
+        self.pushButton.setText(_translate("MainWindow", "KIỂM CHỨNG*"))
         self.label_2.setText(_translate("MainWindow",
                                         "<html><head/><body><p><span style=\" font-size:14pt;\">Lựa chọn mô hình dự đoán của các thuật toán:</span></p></body></html>"))
         self.label_6.setText(_translate("MainWindow",
                                         "<html><head/><body><p><span style=\" font-size:12pt;\">(*) Mọi kết quả dự đoán đều mang tính chất tham khảo</span></p></body></html>"))
         self.radioButton.setToolTip(_translate("MainWindow", "<html><head/><body><p><br/></p></body></html>"))
-        self.radioButton.setText(_translate("MainWindow", "KIỂM NGHIỆM"))
+        self.radioButton.setText(_translate("MainWindow", "KIỂM CHỨNG"))
         self.radioButton_2.setText(_translate("MainWindow", "DỰ ĐOÁN"))
         # self.pushButton_10.setText(_translate("MainWindow", "LOAD DỮ LIỆU"))
         # self.label_10.setText(_translate("MainWindow",
